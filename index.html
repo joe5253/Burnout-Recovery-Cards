@@ -199,21 +199,21 @@ header {
 #draw-area {
   flex: 1; display: flex;
   align-items: center; justify-content: center;
-  padding: 16px 24px 8px;
+  padding: 12px 24px 8px;
   width: 100%;
-  min-height: 0;        /* prevent flex overflow */
+  min-height: 0;
   overflow: hidden;
 }
 .card-wrap {
   perspective: 1200px;
-  width: min(300px, 80vw);
-  max-height: calc(100vh - 240px); /* leave room for header + controls + nav */
+  width: min(260px, 72vw);
+  max-height: calc(100vh - 260px);
   cursor: pointer;
 }
 .card {
   position: relative;
   width: 100%;
-  padding-bottom: min(148%, calc(100vh - 240px));
+  padding-bottom: min(148%, calc(100vh - 260px));
 }
 
 .card-face {
