@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#141416">
+<title>Burnout Recovery Cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-start:   #141416;
+  --bg-mid:     #1a1e1c;
+  --bg-end:     #0f1410;
+  --bg2:        #1e201e;
+  --bg3:        #262a26;
+  --beige:      #ddd0b8;
+  --beige-dim:  #a8997e;
+  --sage:       #8ab09a;
+  --sage-light: #aeccba;
+  --sage-dim:   #527060;
+  --sage-glow:  rgba(138,176,154,0.20);
+  --gold:       #c8a96e;
+  --gold-light: #e2c890;
+  --text:       #ede3cc;
+  --text-dim:   #7a7060;
+  --border:     rgba(220,208,180,0.10);
+  --border-mid: rgba(220,208,180,0.20);
+  --serif:      'Cormorant Garamond', Georgia, serif;
+  --sans:       'Inter', system-ui, sans-serif;
+  --radius:     18px;
+
+  /* Gradient tokens */
+  --grad-bg:        linear-gradient(160deg, #141416 0%, #1c2820 50%, #0e1410 100%);
+  --grad-gate:      radial-gradient(ellipse at 50% 30%, #223028 0%, #16201a 45%, #0e1210 100%);
+  --grad-card-back: linear-gradient(145deg, #1e2820 0%, #161e18 40%, #1a1e1c 100%);
+  --grad-card-front:linear-gradient(160deg, #1c2020 0%, #171d1a 45%, #1a1c1e 100%);
+  --grad-btn:       linear-gradient(135deg, #7a9e8a 0%, #5a8070 50%, #4a6e60 100%);
+  --grad-btn-gold:  linear-gradient(135deg, #c8a96e 0%, #a8885a 50%, #8a6e44 100%);
+  --grad-action:    linear-gradient(135deg, rgba(138,176,154,0.14) 0%, rgba(90,128,112,0.10) 100%);
+  --grad-header:    linear-gradient(180deg, #161a17 0%, #141416 100%);
+  --grad-nav:       linear-gradient(0deg, #101410 0%, #141616 100%);
+  --grad-browse:    linear-gradient(145deg, #1e211e 0%, #1a1d1a 100%);
+}
+
+html, body {
+  height: 100%; width: 100%;
+  background: var(--grad-bg);
+  color: var(--text);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* ─── GATE ─────────────────────────────────────────────── */
+#gate {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: var(--grad-gate);
+  z-index: 100;
+  padding: 32px;
+}
+.gate-eyebrow {
+  font-family: var(--sans);
+  font-size: 10px; letter-spacing: 0.24em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, var(--sage) 0%, var(--sage-light) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 22px;
+}
+.gate-title {
+  font-family: var(--serif);
+  font-size: clamp(30px, 7vw, 46px);
+  font-weight: 300;
+  background: linear-gradient(160deg, var(--beige) 0%, var(--gold-light) 50%, var(--beige-dim) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.gate-sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--beige-dim);
+  text-align: center;
+  margin-bottom: 50px;
+}
+.gate-rule {
+  width: 44px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--sage-dim), transparent);
+  margin: 0 auto 42px;
+}
+.gate-label {
+  font-size: 10px; letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--beige-dim);
+  margin-bottom: 12px;
+}
+#code-input {
+  background: linear-gradient(135deg, #1e2420 0%, #1a1e1a 100%);
+  border: 1px solid var(--border-mid);
+  color: var(--beige);
+  font-family: var(--sans);
+  font-size: 16px;
+  letter-spacing: 0.20em;
+  text-align: center;
+  width: 230px;
+  padding: 14px 20px;
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+#code-input:focus {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px var(--sage-glow);
+}
+#code-input::placeholder { color: var(--text-dim); letter-spacing: 0.12em; }
+#code-error {
+  font-size: 12px; color: #c07a6a;
+  margin-top: 10px; height: 16px;
+  transition: opacity 0.3s; opacity: 0;
+}
+#code-error.show { opacity: 1; }
+#unlock-btn {
+  margin-top: 26px;
+  background: var(--grad-btn);
+  border: none;
+  color: #0f1a14;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  padding: 14px 42px;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: opacity 0.22s, transform 0.18s;
+  box-shadow: 0 4px 20px rgba(90,128,112,0.30);
+}
+#unlock-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+#unlock-btn:active { transform: translateY(0); }
+
+/* ─── APP SHELL ─────────────────────────────────────────── */
+#app { display: none; position: fixed; inset: 0; flex-direction: column; }
+#app.visible { display: flex; }
+
+/* ─── HEADER ────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px 13px;
+  background: var(--grad-header);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.header-title {
+  font-family: var(--serif);
+  font-size: 17px; font-weight: 400;
+  background: linear-gradient(135deg, var(--beige) 0%, var(--gold-light) 60%, var(--beige-dim) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.02em;
+}
+.header-sub {
+  font-size: 9px; letter-spacing: 0.20em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, var(--sage) 0%, var(--sage-light) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-top: 3px;
+}
+.icon-btn {
+  background: linear-gradient(135deg, #1e2420 0%, #1a1e1a 100%);
+  border: 1px solid var(--border-mid);
+  border-radius: 50%; width: 36px; height: 36px;
+  color: var(--beige-dim); font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.icon-btn:hover { border-color: var(--sage); color: var(--sage); box-shadow: 0 0 10px var(--sage-glow); }
+.icon-btn.active { border-color: var(--sage); color: var(--sage); box-shadow: 0 0 10px var(--sage-glow); }
+
+/* ─── VIEWS ─────────────────────────────────────────────── */
+#view-draw, #view-browse, #view-fav { display: none; flex: 1; overflow: hidden; }
+#view-draw.active { display: flex; flex-direction: column; align-items: center; }
+#view-browse.active, #view-fav.active { display: block; overflow-y: auto; }
+
+/* ─── DRAW VIEW ──────────────────────────────────────────── */
+#draw-area {
+  flex: 1; display: flex;
+  align-items: center; justify-content: center;
+  padding: 24px 24px 16px;
+  width: 100%;
+}
+.card-wrap {
+  perspective: 1200px;
+  width: min(340px, 88vw);
+  cursor: pointer;
+}
+.card {
+  position: relative;
+  width: 100%;
+  padding-bottom: 148%;
+}
+
+.card-face {
+  position: absolute; inset: 0;
+  border-radius: 20px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  overflow: hidden;
+  transition: opacity 0.35s ease;
+}
+/* opacity-swap: back visible by default, front hidden */
+.card-back  { opacity: 1; z-index: 2; }
+.card-front { opacity: 0; z-index: 1; }
+.card.flipped .card-back  { opacity: 0; z-index: 1; }
+.card.flipped .card-front { opacity: 1; z-index: 2; }
+
+/* BACK */
+.card-back {
+  background: var(--grad-card-back);
+  border: 1px solid rgba(138,176,154,0.22);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(220,208,180,0.06);
+}
+.card-back-inner { text-align: center; padding: 36px; }
+.card-back-glyph {
+  font-size: 48px;
+  background: linear-gradient(160deg, var(--sage-light) 0%, var(--sage) 50%, var(--sage-dim) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1; margin-bottom: 22px; opacity: 0.7;
+}
+.card-back-deco {
+  width: 36px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--sage-dim), transparent);
+  margin: 0 auto 18px;
+}
+.card-back-label {
+  font-family: var(--serif); font-size: 17px; font-weight: 300;
+  background: linear-gradient(135deg, var(--beige) 0%, var(--beige-dim) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.04em; line-height: 1.5;
+}
+.card-back-sub {
+  font-family: var(--serif); font-style: italic;
+  font-size: 12px; color: var(--sage-dim);
+  margin-top: 8px; letter-spacing: 0.06em;
+}
+
+/* FRONT */
+.card-front {
+  background: var(--grad-card-front);
+  border: 1px solid rgba(200,169,110,0.18);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(220,208,180,0.06);
+  justify-content: flex-start;
+  padding: 26px 24px 24px;
+  overflow-y: auto;
+}
+.card-front::-webkit-scrollbar { width: 3px; }
+.card-front::-webkit-scrollbar-thumb { background: var(--sage-dim); border-radius: 2px; }
+
+.card-num {
+  font-size: 9px; letter-spacing: 0.24em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, var(--sage) 0%, var(--sage-light) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px;
+}
+.card-section-tag {
+  font-size: 8px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-dim);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.card-title {
+  font-family: var(--serif);
+  font-size: clamp(20px, 5vw, 26px);
+  font-weight: 400;
+  background: linear-gradient(135deg, var(--beige) 0%, var(--gold-light) 55%, var(--beige-dim) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2; margin-bottom: 14px;
+}
+.card-when {
+  font-size: 9px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--sage); margin-bottom: 5px;
+}
+.card-when-text {
+  font-size: 11px; color: var(--text-dim);
+  line-height: 1.55; margin-bottom: 18px; font-style: italic;
+}
+.card-divider {
+  width: 26px; height: 1px;
+  background: linear-gradient(90deg, var(--sage-dim), transparent);
+  margin-bottom: 18px; opacity: 0.6;
+}
+.card-oracle-label {
+  font-size: 8px; letter-spacing: 0.20em;
+  text-transform: uppercase; color: var(--sage); margin-bottom: 7px;
+}
+.card-oracle {
+  font-family: var(--serif);
+  font-size: clamp(13px, 3.2vw, 15px);
+  font-style: italic; color: var(--text);
+  line-height: 1.75; margin-bottom: 18px;
+}
+.card-reflect-label {
+  font-size: 8px; letter-spacing: 0.20em;
+  text-transform: uppercase; color: var(--beige-dim); margin-bottom: 6px;
+}
+.card-reflect {
+  font-size: 12px; color: var(--beige-dim);
+  line-height: 1.6; margin-bottom: 18px; font-style: italic;
+}
+.card-action-box {
+  background: var(--grad-action);
+  border: 1px solid rgba(138,176,154,0.22);
+  border-radius: 12px;
+  padding: 13px 15px;
+}
+.card-action-label {
+  font-size: 8px; letter-spacing: 0.20em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, var(--sage) 0%, var(--sage-light) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+.card-action { font-size: 12px; color: var(--text); line-height: 1.6; }
+
+/* ─── DRAW CONTROLS ─────────────────────────────────────── */
+.draw-controls {
+  padding: 0 24px 24px;
+  width: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 10px; flex-shrink: 0;
+}
+.draw-controls-row {
+  display: flex; gap: 12px;
+  width: 100%; max-width: 340px;
+}
+.btn-draw {
+  flex: 1;
+  background: var(--grad-btn);
+  border: none;
+  color: #0c1a12;
+  font-family: var(--sans); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 14px 10px; border-radius: 40px; cursor: pointer;
+  transition: opacity 0.22s, transform 0.18s;
+  box-shadow: 0 4px 18px rgba(90,128,112,0.28);
+}
+.btn-draw:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-draw:active { transform: translateY(0); }
+
+.btn-shuffle {
+  background: linear-gradient(135deg, #1e2622 0%, #1a2018 100%);
+  border: 1px solid rgba(138,176,154,0.30);
+  color: var(--sage-light);
+  font-family: var(--sans); font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 14px 18px; border-radius: 40px; cursor: pointer;
+  transition: border-color 0.22s, color 0.22s, box-shadow 0.22s;
+  white-space: nowrap;
+}
+.btn-shuffle:hover {
+  border-color: var(--sage);
+  box-shadow: 0 0 14px var(--sage-glow);
+}
+
+.card-counter {
+  font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em;
+}
+.draw-hint {
+  font-size: 9px; color: var(--sage-dim);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  min-height: 12px;
+}
+
+/* ─── BROWSE / FAV GRID ──────────────────────────────────── */
+.browse-section-header {
+  padding: 20px 18px 6px;
+  font-size: 9px; letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, var(--sage) 0%, var(--sage-light) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.browse-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 10px; padding: 10px 16px;
+}
+.browse-card {
+  background: var(--grad-browse);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px 14px;
+  cursor: pointer; position: relative;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.browse-card:hover {
+  border-color: var(--sage-dim);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+}
+.browse-num {
+  font-size: 8px; letter-spacing: 0.22em;
+  background: linear-gradient(90deg, var(--sage) 0%, var(--sage-light) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+.browse-title {
+  font-family: var(--serif); font-size: 15px;
+  background: linear-gradient(135deg, var(--beige) 0%, var(--gold-light) 70%, var(--beige-dim) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.3;
+}
+.fav-dot {
+  position: absolute; top: 10px; right: 10px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--sage) 0%, var(--sage-light) 100%);
+  display: none;
+}
+.browse-card.is-fav .fav-dot { display: block; }
+.fav-empty {
+  text-align: center; padding: 80px 32px;
+  font-family: var(--serif); font-style: italic;
+  font-size: 18px; color: var(--text-dim);
+}
+
+/* ─── BOTTOM NAV ─────────────────────────────────────────── */
+nav {
+  display: flex;
+  background: var(--grad-nav);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.nav-btn {
+  flex: 1; background: none; border: none;
+  color: var(--text-dim);
+  font-family: var(--sans); font-size: 9px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 12px 4px 10px; cursor: pointer;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 5px;
+  transition: color 0.2s;
+}
+.nav-btn.active {
+  background: linear-gradient(90deg, var(--sage) 0%, var(--sage-light) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.nav-icon { font-size: 18px; }
+.nav-btn.active .nav-icon {
+  filter: drop-shadow(0 0 4px rgba(138,176,154,0.5));
+}
+
+/* ─── MODAL ─────────────────────────────────────────────── */
+#modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.72); z-index: 150;
+  align-items: flex-end; justify-content: center;
+}
+#modal-overlay.open { display: flex; }
+#modal-sheet {
+  background: linear-gradient(160deg, #1c2220 0%, #171a18 50%, #1a1c1e 100%);
+  border: 1px solid var(--border-mid);
+  border-top: 1px solid rgba(138,176,154,0.20);
+  border-radius: 24px 24px 0 0;
+  width: 100%; max-width: 480px;
+  max-height: 85vh; overflow-y: auto;
+  padding: 28px 24px 44px;
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+#modal-sheet::-webkit-scrollbar { width: 3px; }
+#modal-sheet::-webkit-scrollbar-thumb { background: var(--sage-dim); border-radius: 2px; }
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.modal-close {
+  position: absolute; top: 18px; right: 20px;
+  background: none; border: none;
+  color: var(--text-dim); font-size: 20px;
+  cursor: pointer; padding: 4px;
+  transition: color 0.2s;
+}
+.modal-close:hover { color: var(--beige); }
+
+/* ─── TOAST ─────────────────────────────────────────────── */
+#toast {
+  position: fixed; top: 80px; left: 50%;
+  transform: translateX(-50%) translateY(-12px);
+  background: linear-gradient(135deg, #1e2622 0%, #1a201a 100%);
+  border: 1px solid var(--border-mid);
+  color: var(--beige); font-size: 12px;
+  letter-spacing: 0.06em; padding: 10px 22px;
+  border-radius: 40px; pointer-events: none;
+  opacity: 0; transition: opacity 0.3s, transform 0.3s;
+  z-index: 200; white-space: nowrap;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ─── SHAKE ──────────────────────────────────────────────── */
+@keyframes shake {
+  0%,100%{ transform:translateX(0); }
+  15%{ transform:translateX(-8px); }
+  30%{ transform:translateX(8px); }
+  45%{ transform:translateX(-6px); }
+  60%{ transform:translateX(6px); }
+  75%{ transform:translateX(-3px); }
+  90%{ transform:translateX(3px); }
+}
+.shake { animation: shake 0.45s ease-in-out; }
+
+@keyframes cardShake {
+  0%   { transform: translateX(0) rotate(0deg); }
+  15%  { transform: translateX(-8px) rotate(-2deg); }
+  30%  { transform: translateX(8px) rotate(2deg); }
+  45%  { transform: translateX(-6px) rotate(-1.5deg); }
+  60%  { transform: translateX(6px) rotate(1.5deg); }
+  75%  { transform: translateX(-3px) rotate(-0.8deg); }
+  90%  { transform: translateX(3px) rotate(0.5deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
+#card-wrap.shaking { animation: cardShake 0.55s ease-in-out; }
+</style>
+</head>
+<body>
+
+<!-- ─── GATE ─────────────────────────────────────────────── -->
+<div id="gate">
+  <div class="gate-eyebrow">PsychicSoulStar</div>
+  <div class="gate-title">Burnout Recovery<br>Cards</div>
+  <div class="gate-sub">For ADHD · Executive Dysfunction · Task Paralysis</div>
+  <div class="gate-rule"></div>
+  <div class="gate-label">Access Code</div>
+  <input id="code-input" type="text" placeholder="Enter your code" autocomplete="off" autocorrect="off" spellcheck="false">
+  <div id="code-error">Incorrect code. Please try again.</div>
+  <button id="unlock-btn">Unlock Deck</button>
+</div>
+
+<!-- ─── APP ─────────────────────────────────────────────── -->
+<div id="app">
+  <header>
+    <div>
+      <div class="header-title">Burnout Recovery Cards</div>
+      <div class="header-sub">52 Cards · Rest &amp; Reset</div>
+    </div>
+    <button class="icon-btn" id="fav-toggle-btn" title="Save card">♡</button>
+  </header>
+
+  <!-- DRAW -->
+  <div id="view-draw" class="active">
+    <div id="draw-area">
+      <div class="card-wrap" id="card-wrap">
+        <div class="card" id="main-card">
+          <div class="card-face card-back">
+            <div class="card-back-inner">
+              <div class="card-back-glyph">✦</div>
+              <div class="card-back-deco"></div>
+              <div class="card-back-label">Burnout Recovery<br>Cards</div>
+              <div class="card-back-sub">Draw a card to begin</div>
+            </div>
+          </div>
+          <div class="card-face card-front" id="card-front-content"></div>
+        </div>
+      </div>
+    </div>
+    <div class="draw-controls">
+      <span class="card-counter" id="card-counter">— / 52</span>
+      <span class="draw-hint" id="draw-hint">Draw a card to begin</span>
+      <div class="draw-controls-row">
+        <button class="btn-draw" id="draw-btn">Draw a Card</button>
+        <button class="btn-shuffle" id="shuffle-btn">✦ Shuffle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BROWSE -->
+  <div id="view-browse">
+    <div id="browse-container"></div>
+  </div>
+
+  <!-- SAVED -->
+  <div id="view-fav">
+    <div id="fav-container"></div>
+  </div>
+
+  <nav>
+    <button class="nav-btn active" data-view="draw" onclick="switchView('draw')">
+      <span class="nav-icon">◇</span>Draw
+    </button>
+    <button class="nav-btn" data-view="browse" onclick="switchView('browse')">
+      <span class="nav-icon">≡</span>Browse
+    </button>
+    <button class="nav-btn" data-view="fav" onclick="switchView('fav')">
+      <span class="nav-icon">♡</span>Saved
+    </button>
+  </nav>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div id="modal-sheet">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────
+const SECTIONS = [
+  { title:"Section 1 — Stabilize and Reduce Load", range:[1,13] },
+  { title:"Section 2 — Restart and Re-Engage",     range:[14,26] },
+  { title:"Section 3 — Protect Energy and Focus",  range:[27,39] },
+  { title:"Section 4 — Recover and Rebuild Trust", range:[40,52] },
+];
+
+const CARDS = [
+  {id:1,  title:"Stop the Spiral",            when:"Use when your thoughts are racing and starting feels impossible.",              oracle:"Your mind is trying to solve too much at once. Pause the spiral before it turns into shutdown.",                                                                       reflect:"What is the one fact I know right now?",                                             action:"Put both feet on the floor, exhale slowly three times, and write down the one thing you actually need to do next."},
+  {id:2,  title:"Lower the Load",             when:"Use when your to-do list feels too heavy to even look at.",                    oracle:"Not everything on your list belongs there today. Reduce the load before you ask more from yourself.",                                                              reflect:"What can wait without creating a real problem today?",                               action:"Remove one nonessential task from today's plan."},
+  {id:3,  title:"Start Smaller",              when:"Use when a task feels too big to begin.",                                      oracle:"A smaller start is still a real start. Make the task so small your brain cannot argue with it.",                                                                   reflect:"What is the 2-minute version of this task?",                                        action:"Shrink the task to the first 2-minute action and begin there."},
+  {id:4,  title:"One Thing Only",             when:"Use when you are scattered across too many tabs, tasks, or thoughts.",         oracle:"Your attention works better when it has one target. Pick one thing and let the rest wait.",                                                                       reflect:"What deserves my full attention for the next few minutes?",                          action:"Close every tab, app, or notebook except the one you need right now."},
+  {id:5,  title:"Recovery First",             when:"Use when pushing harder is making things worse.",                              oracle:"You do not need to earn recovery. Rest helps your system become usable again.",                                                                                   reflect:"What would help me feel 10% more functional?",                                      action:"Take a 5-minute reset before returning to work."},
+  {id:6,  title:"Drop the Shame",             when:"Use when you are judging yourself for not keeping up.",                       oracle:"Shame does not make you more productive. Self-respect gives you a better chance to move forward.",                                                                reflect:"What would I say to a friend in the same situation?",                               action:"Replace \"I should be further along\" with \"I am working with the capacity I have today.\""},
+  {id:7,  title:"Check Your Capacity",        when:"Use when you keep asking yourself why you cannot do more.",                   oracle:"Motivation is not the only issue. Sometimes your system is simply out of capacity.",                                                                                reflect:"What does my energy level actually allow right now?",                               action:"Rate your energy from 1 to 10 before deciding what you can reasonably do."},
+  {id:8,  title:"Name the Block",             when:"Use when you feel stuck but cannot explain why.",                             oracle:"What feels stuck may actually be unclear, overloaded, or emotionally expensive. Name the real block.",                                                             reflect:"Am I blocked by confusion, overload, fear, or resistance?",                         action:"Finish this sentence: \"I am stuck because __________.\""},
+  {id:9,  title:"Finish the Sentence",        when:"Use when half-finished thoughts are draining your focus.",                    oracle:"Incomplete thoughts keep pulling on your attention. Complete one loose end and your mind gets quieter.",                                                            reflect:"What unfinished item is taking the most mental space?",                             action:"Finish one draft, note, email, or decision you have been avoiding."},
+  {id:10, title:"Minimum Viable Day",         when:"Use when you need a realistic day instead of a perfect one.",                 oracle:"Not every day needs to be a high-performance day. Some days are just about staying steady.",                                                                        reflect:"What are the 3 essentials that make today count?",                                  action:"Choose 3 essentials only: one body need, one life task, one work task."},
+  {id:11, title:"Reset the Space",            when:"Use when your environment is adding resistance.",                             oracle:"Your environment affects your ability to begin. Make the space easier before blaming the brain.",                                                                  reflect:"What part of my space is making this harder?",                                      action:"Clear one surface and place only the items needed for the next task."},
+  {id:12, title:"Reduce Friction",            when:"Use when the process feels too heavy or too many steps long.",                oracle:"If everything feels hard, the process is probably too heavy. Make the next step easier to reach.",                                                                  reflect:"What barrier can I remove right now?",                                              action:"Put the tools, files, or materials where you can grab them instantly."},
+  {id:13, title:"Permission to Go Slow",      when:"Use when pressure to hurry is making you freeze.",                           oracle:"Slow is not broken. A gentler pace may be the exact thing your system needs.",                                                                                      reflect:"What happens if I stop racing for one minute?",                                     action:"Set a 7-minute timer and work without trying to rush."},
+  {id:14, title:"Keep It Brief",              when:"Use when you need to protect your energy from extra demands.",                oracle:"You do not need a long explanation to protect your energy. Clear and brief is enough.",                                                                             reflect:"What is the shortest true answer I can give?",                                      action:"Practice one short sentence: \"I can't take that on right now.\""},
+  {id:15, title:"Reboot, Don't Restart",      when:"Use when you feel behind and want to give up on the whole day.",             oracle:"You do not need to begin your life over. You need a clean reboot back into function.",                                                                             reflect:"What would help me re-enter this task without pressure?",                           action:"Stand up, stretch, drink water, and return to the task with one simpler next move."},
+  {id:16, title:"Make It Visible",            when:"Use when you keep forgetting the next step.",                                oracle:"The brain works better when the next step is visible. Stop keeping everything inside your head.",                                                                   reflect:"What do I need to see in order to act?",                                            action:"Write the next action on a sticky note and place it in front of you."},
+  {id:17, title:"Take the Small Win",         when:"Use when you need evidence that you can still move.",                        oracle:"Small wins matter when you are rebuilding trust with yourself. One finish can change the whole day.",                                                               reflect:"What can I finish in under 10 minutes?",                                            action:"Complete one task that can be done in under 10 minutes."},
+  {id:18, title:"Interrupt the Freeze",       when:"Use when you feel physically or mentally stuck in place.",                   oracle:"Freeze often softens after movement begins. Your body can help your brain restart.",                                                                                reflect:"What tiny physical action could help me shift?",                                    action:"Walk for 2 minutes or roll your shoulders and hands before trying again."},
+  {id:19, title:"Clear the Tab Jungle",       when:"Use when open tabs and open loops are overwhelming you.",                    oracle:"Too many open loops drain your attention. Simplicity gives your brain room to breathe.",                                                                            reflect:"What is truly needed right now?",                                                   action:"Close every unnecessary tab, window, or note except the one you need."},
+  {id:20, title:"Work With Your Brain",       when:"Use when willpower alone is not working.",                                   oracle:"Fighting your brain costs more energy than supporting it. Use the tools that help you function better.",                                                            reflect:"What support would make this easier to start?",                                     action:"Use a timer, checklist, body double, or music cue for the next task."},
+  {id:21, title:"Just 2 Minutes",             when:"Use when the start feels too heavy to face.",                                oracle:"Starting is often the hardest part. Two minutes is enough to break the resistance.",                                                                                reflect:"What if I only had to begin, not finish?",                                          action:"Do the task for only 2 minutes, then decide the next step from there."},
+  {id:22, title:"Protect the Core",           when:"Use when you need to decide what matters most today.",                       oracle:"Your energy should go to the few things that truly matter. Protect the core, not the noise.",                                                                     reflect:"What one result would make today feel successful?",                                 action:"Identify the one priority that would make today feel successful."},
+  {id:23, title:"Replace Pressure With Structure", when:"Use when anxiety is replacing clear direction.",                        oracle:"Pressure creates panic. Structure creates clarity. Build the frame before asking for output.",                                                                       reflect:"What steps would make this less vague?",                                            action:"Turn one vague task into 3 clear steps."},
+  {id:24, title:"Rest Is Allowed",            when:"Use when you feel guilty for slowing down.",                                 oracle:"Rest is part of the work of recovery. You do not need to prove you deserve it.",                                                                                    reflect:"What would rest look like if guilt was not involved?",                              action:"Take a guilt-free break before your body forces one."},
+  {id:25, title:"Decide Once",                when:"Use when you keep re-deciding the same small things.",                       oracle:"Decision fatigue makes everything heavier. Choose once and stop re-deciding the same thing.",                                                                       reflect:"What is a good-enough decision I can keep for now?",                                action:"Make one decision now and commit to it for the next hour."},
+  {id:26, title:"Name the Real Task",         when:"Use when the task in front of you feels wrong or confusing.",                oracle:"The task in front of you may not be the actual task. Find the outcome that really matters.",                                                                        reflect:"What result do I need here?",                                                       action:"Ask, \"What result do I need here?\""},
+  {id:27, title:"Finish Rough",               when:"Use when perfection is keeping you stuck.",                                  oracle:"A rough finish is better than an unfinished perfection loop. Done creates relief.",                                                                                  reflect:"What is the rough version that still works?",                                       action:"Send the draft, submit the rough version, or complete the imperfect first pass."},
+  {id:28, title:"Borrow Support",             when:"Use when the work is more than one person should carry alone.",              oracle:"You do not need to carry everything alone. Support is a strategy, not a weakness.",                                                                                reflect:"Who or what could help reduce this load?",                                          action:"Ask for help, delegate one small piece, or work alongside someone else."},
+  {id:29, title:"Calm the Noise",             when:"Use when you feel overloaded and unable to think clearly.",                  oracle:"When the system is overloaded, planning gets harder. Calm the noise first.",                                                                                        reflect:"What would lower the intensity right now?",                                         action:"Breathe out longer than you breathe in for 60 seconds."},
+  {id:30, title:"Close One Loop",             when:"Use when background tasks keep nagging your attention.",                     oracle:"Open loops keep draining your attention in the background. Close one loop to free up space.",                                                                       reflect:"Which small task would free the most mental space?",                                action:"Reply to one message, pay one bill, or file one item away."},
+  {id:31, title:"Lower the Standard",         when:"Use when the day demands more than you can give.",                           oracle:"Lowering the standard for today is not failure. It is a smart adjustment for limited energy.",                                                                       reflect:"What does 'good enough for today' actually mean?",                                  action:"Redefine what \"good enough for today\" means in one sentence."},
+  {id:32, title:"Take the Obvious Step",      when:"Use when the whole process feels too messy to think through.",               oracle:"When the whole path feels messy, start with the next obvious action. Clarity follows movement.",                                                                   reflect:"What is the most obvious physical step right now?",                                 action:"Do the one physical step that is most obvious right now."},
+  {id:33, title:"Stop Running on Empty",      when:"Use when you are trying to force output from exhaustion.",                   oracle:"Exhaustion does not respond well to pressure. It responds to fuel, rest, and pacing.",                                                                                reflect:"What basic need have I ignored?",                                                   action:"Eat, hydrate, or sit down before trying to push again."},
+  {id:34, title:"Shorten the Deadline",       when:"Use when urgency is too low to trigger action.",                            oracle:"Long deadlines can feel unreal. A shorter deadline creates enough urgency to begin.",                                                                                reflect:"What is the smallest useful time limit I can set?",                                 action:"Set a 15-minute timer for the first part of the task."},
+  {id:35, title:"Quiet the Inner Critic",     when:"Use when self-talk is making it harder to continue.",                       oracle:"Harsh self-talk slows recovery. A steadier inner voice helps you continue.",                                                                                        reflect:"What would a neutral coach say instead?",                                           action:"Rewrite one critical thought into a neutral coaching statement."},
+  {id:36, title:"Start Before Ready",         when:"Use when you are waiting to feel ready.",                                   oracle:"Readiness often arrives after action begins. Waiting for perfect readiness keeps you stuck.",                                                                       reflect:"What is one imperfect action I can take now?",                                     action:"Begin with one imperfect action now."},
+  {id:37, title:"Take the Fast Path",         when:"Use when you need to conserve energy.",                                     oracle:"The smartest route is often the simplest one. Save energy where you can.",                                                                                         reflect:"What shortcut already exists?",                                                     action:"Use a template, shortcut, saved draft, or checklist instead of starting from zero."},
+  {id:38, title:"Do a 5-Minute Reset",        when:"Use when you need a quick reset before continuing.",                        oracle:"A short reset can restore enough clarity to keep going. Small breaks can prevent bigger crashes.",                                                                  reflect:"What would a short pause help me notice?",                                          action:"Step away from the screen for 5 minutes with no problem-solving."},
+  {id:39, title:"Stop Explaining the Delay",  when:"Use when you are stuck in self-justification.",                             oracle:"You do not need a perfect story for why you are behind. Start from here.",                                                                                           reflect:"What can I do now instead of explaining later?",                                    action:"Return to the current moment and choose the next move."},
+  {id:40, title:"Build a Landing Zone",       when:"Use when you need a smoother return after rest or distraction.",            oracle:"Re-entry is easier when the next step is waiting for you. Make the landing smooth.",                                                                               reflect:"What note or setup would make restarting easier?",                                  action:"Leave a clear note for your future self with the exact next action."},
+  {id:41, title:"Do Less, Better",            when:"Use when your list is too long to be realistic.",                           oracle:"Fewer tasks done well is more sustainable than trying to do everything at once.",                                                                                   reflect:"What should I remove so the rest gets better attention?",                           action:"Remove one task and give your attention to the rest."},
+  {id:42, title:"Break the Perfection Loop",  when:"Use when you keep polishing the same thing without finishing.",             oracle:"Perfectionism keeps tasks open too long. Progress becomes possible when \"good enough\" is allowed.",                                                               reflect:"What is the stop point for this task?",                                             action:"Set a stop point and end the task when it reaches workable quality."},
+  {id:43, title:"Use a Transition Cue",       when:"Use when you need help moving from one mode to another.",                   oracle:"Your brain needs a signal to switch modes. A small ritual can make starting easier.",                                                                                reflect:"What simple cue tells my brain it is time to begin?",                              action:"Change rooms, make tea, or put on headphones before beginning."},
+  {id:44, title:"Lower the Volume",           when:"Use when too much noise or input is making everything harder.",             oracle:"Too much input makes everything feel louder. Reduce the noise so your mind can settle.",                                                                           reflect:"What can I mute for a while?",                                                      action:"Silence notifications for the next 30 minutes."},
+  {id:45, title:"Track the Drain",            when:"Use when you keep feeling depleted and do not know why.",                   oracle:"Burnout grows through repeated drains that go unnoticed. Track what is costing you energy.",                                                                        reflect:"What has been draining me most this week?",                                         action:"Write the top 3 things that drained you most this week."},
+  {id:46, title:"Protect Your Focus Window",  when:"Use when interruptions are breaking your concentration.",                   oracle:"Focus needs protected time. Constant interruption makes every task harder than it should be.",                                                                        reflect:"What would a protected focus block look like right now?",                           action:"Set one 20-minute no-interruption focus window."},
+  {id:47, title:"Return to Basics",           when:"Use when the day feels messy and unsteady.",                               oracle:"When life feels messy, the basics matter most. Simple needs come first.",                                                                                            reflect:"What basic need is most likely to help me recover today?",                          action:"Check one basic need: water, food, sleep, movement, or fresh air."},
+  {id:48, title:"Let It Be Incomplete",       when:"Use when unfinished tasks are making you feel guilty.",                     oracle:"Not everything will be finished today. Some things can stay open without becoming a problem.",                                                                      reflect:"What can remain unfinished without harming anything important?",                    action:"Park the task with a note that says exactly where to resume later."},
+  {id:49, title:"Drop One Extra Thing",       when:"Use when your load feels bigger than your capacity.",                       oracle:"You are likely carrying more than you need to. Drop one extra responsibility, expectation, or worry.",                                                              reflect:"What is one thing I can stop doing this week?",                                     action:"Identify one thing you can stop doing this week."},
+  {id:50, title:"Make the First Move Visible",when:"Use when you know what to do but still cannot begin.",                     oracle:"Action starts faster when the first move is obvious. Remove the guesswork.",                                                                                         reflect:"What can I place in front of me to make the start easier?",                        action:"Put the materials for the task directly in front of you before taking a break."},
+  {id:51, title:"Rebuild Self-Trust",         when:"Use when you feel unsure whether you can rely on yourself.",                oracle:"Confidence grows through kept promises, not big speeches. Small reliability rebuilds trust.",                                                                       reflect:"What promise can I keep today without stretching myself?",                          action:"Make one promise you can absolutely keep today and follow through."},
+  {id:52, title:"Enough for Today",           when:"Use when you need a clean ending instead of another demand.",              oracle:"Today does not need to be exceptional to count. Enough is a valid finish line.",                                                                                    reflect:"What did I complete today, even if it was small?",                                  action:"End the day by naming one thing you completed."},
+];
+
+// ─── VERIFY (silent) ─────────────────────────────────────────
+if (CARDS.length !== 52) console.error('CARD COUNT ERROR: ' + CARDS.length);
+
+function getSectionLabel(id) {
+  for (const s of SECTIONS) { if (id >= s.range[0] && id <= s.range[1]) return s.title; }
+  return "";
+}
+
+// ─── STATE ───────────────────────────────────────────────────
+const ACCESS_CODE = "REST2026";
+let currentCard = null;
+let isFlipped = false;
+let favorites = [];
+try { favorites = JSON.parse(localStorage.getItem('brc_favs') || '[]'); } catch(e) {}
+
+// ─── GATE ────────────────────────────────────────────────────
+const codeInput = document.getElementById('code-input');
+const codeError = document.getElementById('code-error');
+document.getElementById('unlock-btn').addEventListener('click', tryUnlock);
+codeInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+
+function tryUnlock() {
+  const val = codeInput.value.trim().toUpperCase();
+  if (val === ACCESS_CODE) {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    buildBrowse(); buildFav();
+  } else {
+    codeError.classList.add('show');
+    void codeInput.offsetWidth;
+    codeInput.classList.remove('shake');
+    void codeInput.offsetWidth;
+    codeInput.classList.add('shake');
+    codeInput.addEventListener('animationend', () => codeInput.classList.remove('shake'), {once:true});
+  }
+}
+
+// ─── RENDER CARD FRONT ───────────────────────────────────────
+function renderCardFront(card) {
+  document.getElementById('card-front-content').innerHTML = `
+    <div class="card-num">Card ${String(card.id).padStart(2,'0')} of 52</div>
+    <div class="card-section-tag">${getSectionLabel(card.id)}</div>
+    <div class="card-title">${card.title}</div>
+    <div class="card-when">When to use</div>
+    <div class="card-when-text">${card.when}</div>
+    <div class="card-divider"></div>
+    <div class="card-oracle-label">Oracle Message</div>
+    <div class="card-oracle">${card.oracle}</div>
+    <div class="card-reflect-label">Reflection</div>
+    <div class="card-reflect">${card.reflect}</div>
+    <div class="card-action-box">
+      <div class="card-action-label">Action Step</div>
+      <div class="card-action">${card.action}</div>
+    </div>
+  `;
+  document.getElementById('card-counter').textContent = `Card ${String(card.id).padStart(2,'0')} / 52`;
+  updateFavBtn(favorites.includes(card.id));
+}
+
+// ─── DRAW ────────────────────────────────────────────────────
+const mainCard = document.getElementById('main-card');
+
+function drawCard() {
+  // 1. Show back face
+  mainCard.classList.remove('flipped');
+  isFlipped = false;
+
+  // 2. Pick new card & populate front (while back is showing)
+  let idx;
+  do { idx = Math.floor(Math.random() * CARDS.length); }
+  while (CARDS[idx] === currentCard && CARDS.length > 1);
+  currentCard = CARDS[idx];
+  renderCardFront(currentCard);
+
+  // 3. Update hint — user taps card to reveal
+  document.getElementById('draw-hint').textContent = 'Tap card to reveal';
+  document.getElementById('card-counter').textContent = `Card ${String(currentCard.id).padStart(2,'0')} / 52`;
+}
+
+// Tap card to flip (reveal front)
+mainCard.addEventListener('click', () => {
+  if (!currentCard) return;
+  mainCard.classList.toggle('flipped');
+  isFlipped = !isFlipped;
+  document.getElementById('draw-hint').textContent = isFlipped ? 'Draw again for a new card' : 'Tap card to reveal';
+});
+
+document.getElementById('draw-btn').addEventListener('click', drawCard);
+
+// Shuffle — exact pattern from reference project
+document.getElementById('shuffle-btn').addEventListener('click', () => {
+  const wrap = document.getElementById('card-wrap');
+  const card = document.getElementById('main-card');
+
+  // 1. Shake the wrapper immediately (card stays as-is visually)
+  wrap.classList.remove('shaking');
+  void wrap.offsetWidth;
+  wrap.classList.add('shaking');
+
+  // 2. Silently pick new card data during shake
+  let pool = currentCard ? CARDS.filter(c => c.id !== currentCard.id) : CARDS;
+  const next = pool[Math.floor(Math.random() * pool.length)];
+  currentCard = next;
+
+  // 3. After shake ends → reset to face-down, inject new content
+  setTimeout(() => {
+    wrap.classList.remove('shaking');
+    card.classList.remove('flipped');
+    isFlipped = false;
+    renderCardFront(next);
+    document.getElementById('draw-hint').textContent = 'Tap card to reveal';
+    showToast('New card ready');
+  }, 560);
+});
+
+// ─── FAVORITES ───────────────────────────────────────────────
+function updateFavBtn(isFav) {
+  const btn = document.getElementById('fav-toggle-btn');
+  btn.textContent = isFav ? '♥' : '♡';
+  btn.classList.toggle('active', isFav);
+}
+
+document.getElementById('fav-toggle-btn').addEventListener('click', () => {
+  if (!currentCard) return;
+  const idx = favorites.indexOf(currentCard.id);
+  if (idx > -1) { favorites.splice(idx,1); showToast('Removed from Saved'); }
+  else { favorites.push(currentCard.id); showToast('Saved ♥'); }
+  try { localStorage.setItem('brc_favs', JSON.stringify(favorites)); } catch(e) {}
+  updateFavBtn(favorites.includes(currentCard.id));
+  buildFav(); buildBrowse();
+});
+
+// ─── BROWSE ──────────────────────────────────────────────────
+function buildBrowse() {
+  const container = document.getElementById('browse-container');
+  let html = '';
+  let lastSection = '';
+  CARDS.forEach(card => {
+    const sec = getSectionLabel(card.id);
+    if (sec !== lastSection) {
+      if (lastSection) html += '</div>';
+      html += `<div class="browse-section-header">${sec}</div><div class="browse-grid">`;
+      lastSection = sec;
+    }
+    const isFav = favorites.includes(card.id);
+    html += `<div class="browse-card${isFav?' is-fav':''}" onclick="openModal(${card.id})">
+      <div class="fav-dot"></div>
+      <div class="browse-num">${String(card.id).padStart(2,'0')}</div>
+      <div class="browse-title">${card.title}</div>
+    </div>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function buildFav() {
+  const container = document.getElementById('fav-container');
+  if (!favorites.length) {
+    container.innerHTML = '<div class="fav-empty">No saved cards yet.<br>Draw a card and tap ♡ to save it.</div>';
+    return;
+  }
+  const favCards = CARDS.filter(c => favorites.includes(c.id));
+  let html = '<div class="browse-grid" style="padding:16px">';
+  favCards.forEach(card => {
+    html += `<div class="browse-card is-fav" onclick="openModal(${card.id})">
+      <div class="fav-dot"></div>
+      <div class="browse-num">${String(card.id).padStart(2,'0')}</div>
+      <div class="browse-title">${card.title}</div>
+    </div>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ─── MODAL ───────────────────────────────────────────────────
+function openModal(id) {
+  const card = CARDS.find(c => c.id === id);
+  if (!card) return;
+  const isFav = favorites.includes(card.id);
+  document.getElementById('modal-content').innerHTML = `
+    <div>
+      <div class="card-num" style="margin-bottom:4px">Card ${String(card.id).padStart(2,'0')} of 52</div>
+      <div style="font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-dim);padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:16px">${getSectionLabel(card.id)}</div>
+      <div class="card-title" style="font-size:22px;margin-bottom:14px">${card.title}</div>
+      <div class="card-when" style="margin-bottom:5px">When to use</div>
+      <div class="card-when-text">${card.when}</div>
+      <div class="card-divider"></div>
+      <div class="card-oracle-label">Oracle Message</div>
+      <div class="card-oracle">${card.oracle}</div>
+      <div class="card-reflect-label">Reflection</div>
+      <div class="card-reflect">${card.reflect}</div>
+      <div class="card-action-box">
+        <div class="card-action-label">Action Step</div>
+        <div class="card-action">${card.action}</div>
+      </div>
+      <button id="modal-fav-btn" onclick="toggleFavFromModal(${card.id})"
+        style="margin-top:16px;width:100%;background:transparent;border:1px solid ${isFav?'var(--sage)':'var(--border-mid)'};color:${isFav?'var(--sage)':'var(--beige-dim)'};font-family:var(--sans);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;padding:12px;border-radius:40px;cursor:pointer;transition:border-color 0.2s,color 0.2s">
+        ${isFav?'♥ Saved':'♡ Save Card'}
+      </button>
+    </div>
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function toggleFavFromModal(id) {
+  const idx = favorites.indexOf(id);
+  if (idx > -1) { favorites.splice(idx,1); showToast('Removed from Saved'); }
+  else { favorites.push(id); showToast('Saved ♥'); }
+  try { localStorage.setItem('brc_favs', JSON.stringify(favorites)); } catch(e) {}
+  const isFav = favorites.includes(id);
+  const btn = document.getElementById('modal-fav-btn');
+  if (btn) {
+    btn.textContent = isFav ? '♥ Saved' : '♡ Save Card';
+    btn.style.borderColor = isFav ? 'var(--sage)' : 'var(--border-mid)';
+    btn.style.color = isFav ? 'var(--sage)' : 'var(--beige-dim)';
+  }
+  buildFav(); buildBrowse();
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay'))
+    document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// ─── NAV ─────────────────────────────────────────────────────
+function switchView(name) {
+  ['draw','browse','fav'].forEach(v => {
+    document.getElementById('view-'+v).classList.toggle('active', v===name);
+    document.querySelector(`[data-view="${v}"]`).classList.toggle('active', v===name);
+  });
+}
+
+// ─── TOAST ───────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+</script>
+</body>
+</html>
