@@ -38,7 +38,7 @@
   /* Gradient tokens */
   --grad-bg:        linear-gradient(160deg, #141416 0%, #1c2820 50%, #0e1410 100%);
   --grad-gate:      radial-gradient(ellipse at 50% 30%, #223028 0%, #16201a 45%, #0e1210 100%);
-  --grad-card-back: linear-gradient(145deg, #1e2820 0%, #161e18 40%, #1a1e1c 100%);
+  --grad-card-back: linear-gradient(145deg, #263a2e 0%, #1e2e24 40%, #243028 100%);
   --grad-card-front:linear-gradient(160deg, #1c2020 0%, #171d1a 45%, #1a1c1e 100%);
   --grad-btn:       linear-gradient(135deg, #7a9e8a 0%, #5a8070 50%, #4a6e60 100%);
   --grad-btn-gold:  linear-gradient(135deg, #c8a96e 0%, #a8885a 50%, #8a6e44 100%);
@@ -150,7 +150,7 @@ html, body {
 #unlock-btn:active { transform: translateY(0); }
 
 /* ─── APP SHELL ─────────────────────────────────────────── */
-#app { display: none; position: fixed; inset: 0; flex-direction: column; }
+#app { display: none; position: fixed; inset: 0; flex-direction: column; overflow: hidden; }
 #app.visible { display: flex; }
 
 /* ─── HEADER ────────────────────────────────────────────── */
@@ -191,7 +191,7 @@ header {
 .icon-btn.active { border-color: var(--sage); color: var(--sage); box-shadow: 0 0 10px var(--sage-glow); }
 
 /* ─── VIEWS ─────────────────────────────────────────────── */
-#view-draw, #view-browse, #view-fav { display: none; flex: 1; overflow: hidden; }
+#view-draw, #view-browse, #view-fav { display: none; flex: 1; overflow: hidden; min-height: 0; }
 #view-draw.active { display: flex; flex-direction: column; align-items: center; }
 #view-browse.active, #view-fav.active { display: block; overflow-y: auto; }
 
@@ -199,18 +199,21 @@ header {
 #draw-area {
   flex: 1; display: flex;
   align-items: center; justify-content: center;
-  padding: 24px 24px 16px;
+  padding: 16px 24px 8px;
   width: 100%;
+  min-height: 0;        /* prevent flex overflow */
+  overflow: hidden;
 }
 .card-wrap {
   perspective: 1200px;
-  width: min(340px, 88vw);
+  width: min(300px, 80vw);
+  max-height: calc(100vh - 240px); /* leave room for header + controls + nav */
   cursor: pointer;
 }
 .card {
   position: relative;
   width: 100%;
-  padding-bottom: 148%;
+  padding-bottom: min(148%, calc(100vh - 240px));
 }
 
 .card-face {
@@ -230,8 +233,8 @@ header {
 /* BACK */
 .card-back {
   background: var(--grad-card-back);
-  border: 1px solid rgba(138,176,154,0.22);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(220,208,180,0.06);
+  border: 1px solid rgba(138,176,154,0.35);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(138,176,154,0.08), inset 0 1px 0 rgba(220,208,180,0.08);
 }
 .card-back-inner { text-align: center; padding: 36px; }
 .card-back-glyph {
@@ -344,10 +347,12 @@ header {
 
 /* ─── DRAW CONTROLS ─────────────────────────────────────── */
 .draw-controls {
-  padding: 0 24px 24px;
+  padding: 0 24px 16px;
   width: 100%;
   display: flex; flex-direction: column;
-  align-items: center; gap: 10px; flex-shrink: 0;
+  align-items: center; gap: 8px;
+  flex-shrink: 0;       /* NEVER shrink — always visible */
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
 }
 .draw-controls-row {
   display: flex; gap: 12px;
