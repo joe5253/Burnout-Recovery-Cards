@@ -745,7 +745,6 @@ function renderCardFront(card) {
       <div class="card-action">${card.action}</div>
     </div>
   `;
-  document.getElementById('card-counter').textContent = `Card ${String(card.id).padStart(2,'0')} / 52`;
   updateFavBtn(favorites.includes(card.id));
 }
 
@@ -766,7 +765,7 @@ function drawCard() {
 
   // 3. Update hint — user taps card to reveal
   document.getElementById('draw-hint').textContent = 'Tap card to reveal';
-  document.getElementById('card-counter').textContent = `Card ${String(currentCard.id).padStart(2,'0')} / 52`;
+  document.getElementById('card-counter').textContent = '— / 52';
 }
 
 // Tap card to flip (reveal front)
@@ -775,6 +774,9 @@ mainCard.addEventListener('click', () => {
   mainCard.classList.toggle('flipped');
   isFlipped = !isFlipped;
   document.getElementById('draw-hint').textContent = isFlipped ? 'Draw again for a new card' : 'Tap card to reveal';
+  document.getElementById('card-counter').textContent = isFlipped
+    ? `Card ${String(currentCard.id).padStart(2,'0')} / 52`
+    : '— / 52';
 });
 
 document.getElementById('draw-btn').addEventListener('click', drawCard);
@@ -801,6 +803,7 @@ document.getElementById('shuffle-btn').addEventListener('click', () => {
     isFlipped = false;
     renderCardFront(next);
     document.getElementById('draw-hint').textContent = 'Tap card to reveal';
+    document.getElementById('card-counter').textContent = '— / 52';
     showToast('New card ready');
   }, 560);
 });
